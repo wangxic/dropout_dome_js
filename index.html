@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+	<script src="jquery.min.js"></script>
+	<style type="text/css">
+		 body {
+            margin: 0;
+            padding: 0;
+            background-image:url('img/bg.jpg');
+            background-repeat:no-repeat;
+			background-size: cover;
+        }
+
+        .barrage {
+            position: fixed;
+            display: block;
+        }
+
+        .barrage_name {
+            width: 180px;
+            height: 80px;
+             background-image:url('img/jie.jpg');
+            background-repeat:no-repeat;
+        }
+
+		.xianyou{
+			background: #555;width: 100px;height: 100px;position: absolute;
+		}
+	</style>
+</head>
+<body width="100%" height="100%">
+	<div id="games">
+		
+	</div>
+	  <div class="barrage" id="barrage"  moveX="1">
+        <div class="barrage_name" id="barrage_name">
+
+        </div>
+    </div>
+</body>
+</html>
+<script type="text/javascript">
+var _width = $(window).width()-100;
+var _height = $(window).height();
+ var arr = new Array();
+$('.barrage').attr('style',"top:"+_height*0.6+"px;");
+
+mun =  8;
+var length=0;
+time = 200;
+shengcheng();
+function shengcheng(){
+	shengc = setInterval(function () {
+
+	left_rand = parseInt(Math.random() *_width+1);
+	img = parseInt(Math.random() *6+1);
+	var div_id = 'diao_'+length;
+	var html_d = '<div id="'+div_id+'" class="xianyou" style="left: '+left_rand+'px;top: 0px; " top="0" left="0"><img src="img/'+img+'.jpg" width="100"></div>';
+	$("#games").append(html_d);
+	var mun_leg = $('.xianyou').length;
+	if(mun_leg==mun){
+		clearInterval(shengc);
+		dd();
+		
+	}
+
+	diaolou(div_id,left_rand);
+	length ++;
+},time);
+
+}
+
+function dd(){
+	dd_ddd = setInterval(function () {
+	var mun_leg = $('.xianyou').length;
+
+		if(mun_leg<mun){
+			shengcheng();
+			clearInterval(dd_ddd);
+		}
+	},100);
+}
+	 	var rand = parseInt(Math.random() *6+3);
+
+function diaolou(div_id,left_rand){
+	
+
+	 arr[div_id] = setInterval(function(){
+		var diao_h = $('#'+div_id).attr("top");
+		var _IntegerouterHeight = $('#'+div_id).outerHeight();
+		if(parseInt(_IntegerouterHeight)+parseInt(diao_h)==_height*0.7 || _height*0.7<parseInt(_IntegerouterHeight)+parseInt(diao_h)){
+			clearInterval(arr[div_id]);
+			$('#'+div_id).remove();
+		}
+		_top= parseInt(diao_h)+parseInt(rand);	
+		$('#'+div_id).attr("style","top: "+_top+"px;left: "+left_rand+"px;");
+		var diao_h = $('#'+div_id).attr("top",_top);
+		var diao_h = $('#'+div_id).attr("left",left_rand);
+		computation();
+	}, 4);
+}
+
+
+        var cont = $("#barrage");
+        var contW = $("#barrage").width();
+        var contH = $("#barrage").height();
+
+        var startX, startY, sX, sY, moveX, moveY;
+        var winW = $(window).width();
+        var winH = $(window).height();
+
+        cont.on({//绑定事件
+            touchstart: function (e) {
+                startX = e.originalEvent.targetTouches[0].pageX;    //获取点击点的X坐标    
+                startY = e.originalEvent.targetTouches[0].pageY;    //获取点击点的Y坐标
+                //console.log("startX="+startX+"************startY="+startY);
+                sX = $(this).offset().left;//相对于当前窗口X轴的偏移量
+                sY = $(this).offset().top;//相对于当前窗口Y轴的偏移量
+                //console.log("sX="+sX+"***************sY="+sY);
+                leftX = startX - sX;//鼠标所能移动的最左端是当前鼠标距div左边距的位置
+                rightX = winW - contW + leftX;//鼠标所能移动的最右端是当前窗口距离减去鼠标距div最右端位置
+                topY = startY - sY;//鼠标所能移动最上端是当前鼠标距div上边距的位置
+                bottomY = winH - contH + topY;//鼠标所能移动最下端是当前窗口距离减去鼠标距div最下端位置                
+            },
+            touchmove: function (e) {
+                e.preventDefault();
+               	
+                moveX = e.originalEvent.targetTouches[0].pageX;//移动过程中X轴的坐标
+                moveY = _height*0.6
+                $('.barrage').attr('moveX',moveX);
+
+                //移动过程中Y轴的坐标
+                //console.log("moveX="+moveX+"************moveY="+moveY);
+                if (moveX < leftX) { moveX = leftX; }
+                if (moveX > rightX) { moveX = rightX; }
+                if (moveY < topY) { moveY = topY; }
+                if (moveY > bottomY) { moveY = bottomY; }
+                $(this).css({
+                    "left": moveX + sX - startX,
+                    "top": moveY,
+                })
+       			computation()
+
+            },
+        })
+
+
+function computation(){
+	var moveX= parseInt($('.barrage').attr('moveX'));
+	 var b = $('.barrage_name').width();
+                var d = $('.barrage_name').height();
+                for (var i = $('.xianyou').length - 1; i >= 0; i--) {
+                	var div_height = $('.xianyou').eq(i).attr('top');
+                	var div_dd = $('.xianyou').eq(i).height();
+                	if(parseInt(div_dd)+parseInt(div_height)<_height*0.6 || parseInt(div_height)>_height*0.6+(parseInt(d)/2)){
+                		continue;
+                	}
+
+                
+                	// 就算左右
+                	var left = $('.xianyou').eq(i).attr('left');
+                	var c = $('.xianyou').eq(i).width();
+                	// 中奖了
+                	if(parseInt(left)+parseInt(c)>moveX-(parseInt(c)/2) && (parseInt(left)<moveX+parseInt(b)-parseInt(c))){
+                		console.log('中奖:'+$('.xianyou').eq(i).attr('id'));
+						$('.xianyou').eq(i).remove();
+						// clearInterval(arr[$('.xianyou').eq(i).attr('id')]);
+                	}
+                }
+
+}
+
+</script>
